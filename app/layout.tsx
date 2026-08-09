@@ -20,20 +20,20 @@ const siteUrl = (
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "mixtape.fm — late night drive",
+  title: "Sailaab — the playlist you never asked for",
   description:
-    "A personal soundtrack for empty roads, city lights, and the long way home.",
+    "367 songs and over 24 hours of music.",
   openGraph: {
-    title: "mixtape.fm — late night drive",
+    title: "Sailaab — the playlist you never asked for",
     description:
-      "Songs for empty roads, city lights, and the long way home.",
+    "367 songs and over 24 hours of music.",
     images: [`${siteUrl}/og.png`],
   },
   twitter: {
     card: "summary_large_image",
-    title: "mixtape.fm — late night drive",
+    title: "Sailaab — the playlist you never asked for",
     description:
-      "Songs for empty roads, city lights, and the long way home.",
+    "367 songs and over 24 hours of music.",
     images: [`${siteUrl}/og.png`],
   },
 };

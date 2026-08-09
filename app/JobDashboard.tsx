@@ -31,8 +31,8 @@ export function JobDashboard() {
   const [activeId, setActiveId] = useState(1);
   const [playing, setPlaying] = useState(false);
   const [query, setQuery] = useState("");
-  const [playlistUrl, setPlaylistUrl] = useState("");
-  const [showEmbed, setShowEmbed] = useState(false);
+  const [playlistUrl, setPlaylistUrl] = useState("https://open.spotify.com/playlist/3sv1rMIHxhoBKEUt0HLKTX");
+  const [showEmbed, setShowEmbed] = useState(true);
   const active = tracks.find((track) => track.id === activeId) ?? tracks[0];
   const filtered = useMemo(() => tracks.filter((track) =>
     `${track.title} ${track.artist} ${track.album}`.toLowerCase().includes(query.toLowerCase()),
@@ -57,7 +57,7 @@ export function JobDashboard() {
         </nav>
         <div className="side-label playlist-label">PLAYLISTS <button type="button" aria-label="Add playlist">+</button></div>
         <div className="playlist-list">
-          <a className="playlist-current" href="#top"><i style={{ background: "linear-gradient(135deg,#e4b85c,#9f493d)" }} /> late night drive <small>24</small></a>
+          <a className="playlist-current" href="#top"><i style={{ background: "linear-gradient(135deg,#667286,#202735)" }} /> Sailaab <small>367</small></a>
           <a href="#top"><i style={{ background: "linear-gradient(135deg,#729d92,#d0a876)" }} /> sunday morning <small>31</small></a>
           <a href="#top"><i style={{ background: "linear-gradient(135deg,#bf6a8b,#563968)" }} /> soft launch <small>18</small></a>
         </div>
@@ -66,16 +66,16 @@ export function JobDashboard() {
 
       <section className="main-column" id="top">
         <header className="topbar">
-          <div className="crumb"><span>MY PLAYLIST</span><b>/</b> late night drive</div>
+          <div className="crumb"><span>MY PLAYLIST</span><b>/</b> Sailaab</div>
           <div className="top-actions"><button className="icon-button" type="button" aria-label="Search">⌕</button><button className="avatar" type="button" aria-label="Profile">V</button></div>
         </header>
         <div className="content-wrap">
           <section className="hero-player">
             <div className="hero-copy">
               <p className="overline">A PERSONAL SOUNDTRACK</p>
-              <h1>late night<br /><em>drive.</em></h1>
-              <p className="hero-description">Songs for empty roads, city lights,<br />and the long way home.</p>
-              <div className="hero-meta"><span>24 songs</span><span>1 hr 42 min</span><span>updated today</span></div>
+              <h1>Sailaab<br /><em>playlist.</em></h1>
+              <p className="hero-description">The playlist you never asked for,<br />with songs for every kind of day.</p>
+              <div className="hero-meta"><span>367 songs</span><span>24+ hours</span><span>public playlist</span></div>
             </div>
             <div className="record-stage" aria-label={`Now playing ${active.title}`}>
               <div className="record-shadow" />
@@ -95,14 +95,14 @@ export function JobDashboard() {
           </section>
 
           <section className="track-section" id="tracks">
-            <div className="section-heading"><div><p className="overline">THE FULL LIST</p><h2>All tracks <sup>{tracks.length}</sup></h2></div><label className="search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search playlist" aria-label="Search playlist" /></label></div>
+            <div className="section-heading"><div><p className="overline">A FEW FAVORITES</p><h2>Featured tracks <sup>{tracks.length}</sup></h2></div><label className="search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search picks" aria-label="Search featured tracks" /></label></div>
             <div className="track-table"><div className="table-head"><span>#</span><span>title</span><span>album</span><span>length</span></div>
               {filtered.map((track) => <button className={`track-row ${activeId === track.id ? "is-active" : ""}`} key={track.id} onClick={() => selectTrack(track)} type="button"><span className="track-number">{activeId === track.id && playing ? <span className="eq"><i /><i /><i /></span> : String(track.id).padStart(2, "0")}</span><span className="track-title"><i style={{ background: track.color }} /><b>{track.title}</b><small>{track.artist}</small></span><span className="track-album">{track.album}</span><span className="track-duration">{track.duration}</span><span className="row-play">▶</span></button>)}
             </div>
           </section>
 
           <section className="connect-card" id="recent">
-            <div><p className="overline">BRING YOUR OWN</p><h2>Connect a Spotify playlist</h2><p>Paste a public playlist link and keep the music playing in the Spotify player.</p></div>
+            <div><p className="overline">THE FULL PLAYLIST</p><h2>Play Sailaab on Spotify</h2><p>Browse all 367 songs and keep the full playlist playing in the Spotify player.</p></div>
             <div className="connect-form"><input value={playlistUrl} onChange={(event) => setPlaylistUrl(event.target.value)} placeholder="https://open.spotify.com/playlist/..." aria-label="Spotify playlist URL" /><button type="button" onClick={() => setShowEmbed(true)} disabled={!playlistId}>Load playlist <span>↗</span></button></div>
             {showEmbed && playlistId && <iframe className="spotify-embed" title="Spotify playlist" src={`https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />}
           </section>
