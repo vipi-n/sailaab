@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const playlistUrl = "https://open.spotify.com/playlist/3sv1rMIHxhoBKEUt0HLKTX";
+const playlistUrl = "https://open.spotify.com/playlist/3sv1rMlHxhoBKEUt0HLkTX";
 
 function extractPlaylistId(value: string) {
   const match = value.match(/playlist[/:]([a-zA-Z0-9]+)|^([a-zA-Z0-9]{22})$/);
