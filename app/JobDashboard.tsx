@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const playlistUrl = "https://music.youtube.com/playlist?list=PLLMp8bI3w5fA&si=dxwmi-KlHWreS6x9";
-const spotifyUrl = "https://open.spotify.com/playlist/3sv1rMlHxhoBKEUt0HLkTX";
+const spotifyUrl = "https://open.spotify.com/playlist/3sv1rMlHxhoBKEUt0HLkTX?si=YqAFMW-TR4uVi04b9zHuQw";
 const playlistId = "PLLMp8bI3w5fA";
 const firstVideoId = "DHjXaASKzqM";
 
@@ -21,15 +21,18 @@ type YouTubeWindow = Window & {
 };
 
 export function JobDashboard() {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const localThumbnail = `${basePath}/sailaab-thumbnail.png`;
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [songTitle, setSongTitle] = useState("Loading song…");
   const [songArtist, setSongArtist] = useState("");
-  const [songThumbnail, setSongThumbnail] = useState("/sailaab-thumbnail.png");
+  const [songThumbnail, setSongThumbnail] = useState(localThumbnail);
 
   useEffect(() => {
     const browserWindow = window as YouTubeWindow;
+    let pollId: number | undefined;
     const updateSong = (player: YouTubePlayer) => {
       const data = player.getVideoData();
       if (data.title) setSongTitle(data.title);
@@ -42,7 +45,7 @@ export function JobDashboard() {
         height: "1",
         width: "1",
         videoId: firstVideoId,
-        playerVars: { list: playlistId, listType: "playlist", autoplay: 0, controls: 0, playsinline: 1, rel: 0 },
+        playerVars: { list: playlistId, listType: "playlist", autoplay: 0, controls: 0, playsinline: 1, rel: 0, origin: window.location.origin },
         events: {
           onReady: () => { setPlayerReady(true); if (playerRef.current) updateSong(playerRef.current); },
           onStateChange: (event: { data: number }) => {
@@ -54,13 +57,25 @@ export function JobDashboard() {
     };
     if (browserWindow.YT?.Player) createPlayer();
     else {
-      const script = document.createElement("script");
-      script.src = "https://www.youtube.com/iframe_api";
-      script.async = true;
       browserWindow.onYouTubeIframeAPIReady = createPlayer;
-      document.head.appendChild(script);
+      const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        script.async = true;
+        document.head.appendChild(script);
+      }
+      pollId = window.setInterval(() => {
+        if (browserWindow.YT?.Player) {
+          window.clearInterval(pollId);
+          createPlayer();
+        }
+      }, 250);
     }
-    return () => { browserWindow.onYouTubeIframeAPIReady = undefined; };
+    return () => {
+      if (pollId) window.clearInterval(pollId);
+      browserWindow.onYouTubeIframeAPIReady = undefined;
+    };
   }, []);
 
   function togglePlayback() {
@@ -79,7 +94,7 @@ export function JobDashboard() {
 
   return (
     <main className="sailaab-page">
-      <section className="sailaab-hero" id="top">
+      <section className="sailaab-hero" id="top" style={{ backgroundImage: `url("${localThumbnail}")` }}>
         <div className="hero-shade" />
         <header className="sailaab-nav">
           <nav className="platform-links" aria-label="Music platforms">
