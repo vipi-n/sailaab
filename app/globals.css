@@ -20,6 +20,10 @@ button,input { font:inherit; }
 @keyframes cloud-drift-two { from { opacity:.17; transform:translate3d(5%,-1%,0) scale(1.06); } to { opacity:.28; transform:translate3d(-17%,3%,0) scale(.99); } }
 @keyframes wave-roll { from { transform:translate3d(-2%,2%,0) rotate(-.6deg) scaleY(.93); } to { transform:translate3d(2%,-5%,0) rotate(.6deg) scaleY(1.11); } }
 @keyframes wave-roll-front { from { transform:translate3d(2%,3%,0) rotate(.55deg) scaleY(.94); } to { transform:translate3d(-2%,-4.5%,0) rotate(-.55deg) scaleY(1.12); } }
+.hero-title { isolation:isolate; mix-blend-mode:normal; }
+.hero-title h1 { color:#fff9ef; mix-blend-mode:normal; }
+.hero-title .hero-hindi { color:rgba(153,174,187,.76); mix-blend-mode:normal; }
+.song-color-wash { background-position:center; background-size:cover; filter:blur(75px) saturate(1.85) contrast(1.08); inset:-16%; mix-blend-mode:color; opacity:.27; pointer-events:none; position:absolute; transform:scale(1.08); transition:background-image .8s ease,opacity .8s ease; }
 .hero-shade { background:linear-gradient(180deg,rgba(9,13,17,.28) 0%,rgba(9,13,17,.08) 34%,rgba(9,11,12,.2) 60%,rgba(5,7,8,.82) 100%),linear-gradient(90deg,rgba(9,13,17,.35),transparent 50%,rgba(9,13,17,.24)); inset:0; position:absolute; }
 .sailaab-nav { align-items:center; display:flex; justify-content:flex-end; padding:29px 38px; position:relative; z-index:2; }
 .sailaab-logo { font-size:17px; font-weight:800; letter-spacing:-.04em; }.sailaab-logo span { color:var(--lime); font-size:25px; margin-right:9px; vertical-align:-2px; }
@@ -37,3 +41,18 @@ button,input { font:inherit; }
 @media (prefers-reduced-motion:reduce) { .ocean-scene,.moving-cloud,.moving-wave { animation:none; } }
 @media (max-width:900px) { .playlist-toggle { bottom:126px; right:18px; } }
 @media (max-width:700px) { .sailaab-nav { padding:22px 18px; }.sailaab-nav nav a { font-size:10px; }.hero-title { top:42%; }.hero-title h1 { font-size:clamp(82px,23vw,150px); }.floating-player { bottom:41px; gap:9px; }.disc-art { height:51px; width:51px; }.floating-info b { font-size:13px; }.floating-info small { display:none; }.player-hint { font-size:8px; }.playlist-drawer { border-radius:20px 20px 0 0; bottom:0; left:0; right:0; top:8vh; width:100%; }.playlist-drawer-header { padding:20px 20px 13px; } }
+@media (max-width:700px) {
+  html,body { height:100%; overflow:hidden; width:100%; }
+  .sailaab-page,.sailaab-hero { height:100dvh; min-height:100dvh; overflow:hidden; width:100%; }
+  .floating-player { bottom:max(12px,env(safe-area-inset-bottom)); display:grid; gap:5px 7px; grid-template-columns:46px minmax(0,1fr) 28px 40px 28px; max-width:none; padding:7px 8px; width:calc(100% - 24px); }
+  .disc-art { height:46px; width:46px; }
+  .floating-info { gap:2px; }
+  .floating-info b { font-size:12px; }
+  .floating-info span { font-size:10px; }
+  .progress-row { gap:4px; margin-top:1px; }
+  .progress-slider { min-width:0; }
+  .round-play { font-size:14px; height:40px; width:40px; }
+  .transport-button { font-size:10px; height:28px; width:28px; }
+  .playlist-toggle { bottom:92px; height:34px; padding:0 11px; right:12px; }
+}
+@media (max-width:360px) { .floating-info span { display:none; } }

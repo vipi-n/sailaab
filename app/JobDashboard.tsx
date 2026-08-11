@@ -133,6 +133,7 @@ export function JobDashboard() {
         <div className="moving-cloud cloud-two" aria-hidden="true" />
         <div className="moving-wave wave-back" aria-hidden="true" />
         <div className="moving-wave wave-front" aria-hidden="true" />
+        <div className="song-color-wash" style={{ backgroundImage: `url("${songThumbnail}")` }} aria-hidden="true" />
         <div className="hero-shade" />
         <header className="sailaab-nav">
           <nav className="platform-links" aria-label="Music platforms">
