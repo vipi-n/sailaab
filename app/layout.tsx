@@ -15,26 +15,29 @@ const themeScript = `
 `;
 
 const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://rolescout.example.com"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 ).replace(/\/+$/, "");
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const siteThumbnail = `${basePath}/sailaab-storm-painting-v3.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Sailaab — the playlist you never asked for",
-  description:
-    "367 songs and over 24 hours of music.",
+  title: "Sailaab",
+  description: "Sailaab",
+  icons: {
+    icon: siteThumbnail,
+    apple: siteThumbnail,
+  },
   openGraph: {
-    title: "Sailaab — the playlist you never asked for",
-    description:
-    "367 songs and over 24 hours of music.",
-    images: [`${siteUrl}/og.png`],
+    title: "Sailaab",
+    description: "Sailaab",
+    images: [siteThumbnail],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sailaab — the playlist you never asked for",
-    description:
-    "367 songs and over 24 hours of music.",
-    images: [`${siteUrl}/og.png`],
+    title: "Sailaab",
+    description: "Sailaab",
+    images: [siteThumbnail],
   },
 };
 
