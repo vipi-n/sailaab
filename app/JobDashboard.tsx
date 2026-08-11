@@ -12,11 +12,13 @@ export function JobDashboard() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const heroBackground = `${basePath}/sailaab-storm-painting-v3.png`;
   const playerRef = useRef<HTMLIFrameElement | null>(null);
+  const currentSongRef = useRef<HTMLButtonElement | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [embedSrc, setEmbedSrc] = useState("");
+  const [playlistOpen, setPlaylistOpen] = useState(false);
   const currentTrack = playlistTracks[currentIndex];
   const songThumbnail = `https://i.ytimg.com/vi/${currentTrack.id}/hqdefault.jpg`;
 
@@ -39,6 +41,19 @@ export function JobDashboard() {
     window.addEventListener("message", receivePlayerMessage);
     return () => window.removeEventListener("message", receivePlayerMessage);
   }, []);
+
+  useEffect(() => {
+    if (!playlistOpen) return;
+    const frame = requestAnimationFrame(() => currentSongRef.current?.scrollIntoView({ block: "center" }));
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setPlaylistOpen(false);
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [playlistOpen, currentIndex]);
 
   function sendPlayerCommand(command: "playVideo" | "pauseVideo" | "loadVideoById" | "seekTo", args: unknown[] = []) {
     playerRef.current?.contentWindow?.postMessage(
@@ -86,6 +101,17 @@ export function JobDashboard() {
     setPlaying(true);
   }
 
+  function playTrack(index: number) {
+    if (!playerRef.current) return;
+    const track = playlistTracks[index];
+    connectPlayer();
+    sendPlayerCommand("loadVideoById", [track.id]);
+    setCurrentIndex(index);
+    setCurrentTime(0);
+    setDuration(0);
+    setPlaying(true);
+  }
+
   function seekTo(seconds: number) {
     connectPlayer();
     sendPlayerCommand("seekTo", [seconds, true]);
@@ -110,8 +136,8 @@ export function JobDashboard() {
         <div className="hero-shade" />
         <header className="sailaab-nav">
           <nav className="platform-links" aria-label="Music platforms">
-            <a href={playlistUrl} target="_blank" rel="noreferrer" aria-label="Open YouTube Music"><img src="https://cdn.simpleicons.org/youtubemusic/fff9ef" alt="YouTube Music" /></a>
-            <a href={spotifyUrl} target="_blank" rel="noreferrer" aria-label="Open Spotify"><img src="https://cdn.simpleicons.org/spotify/fff9ef" alt="Spotify" /></a>
+            <a href={playlistUrl} target="_blank" rel="noreferrer" aria-label="Open YouTube Music"><img src="https://cdn.simpleicons.org/youtubemusic/FF0000" alt="YouTube Music" /></a>
+            <a href={spotifyUrl} target="_blank" rel="noreferrer" aria-label="Open Spotify"><img src="https://cdn.simpleicons.org/spotify/1ED760" alt="Spotify" /></a>
           </nav>
         </header>
 
@@ -147,6 +173,46 @@ export function JobDashboard() {
           <button className="round-play" type="button" onClick={togglePlayback} aria-label={playing ? "Pause song" : "Play first song"}>{playing ? "Ⅱ" : "▶"}</button>
           <button className="transport-button next-button" type="button" onClick={playNext} aria-label="Play next song">▶|</button>
         </div>
+        <button
+          className="playlist-toggle"
+          type="button"
+          aria-label="Show all songs"
+          aria-controls="sailaab-song-list"
+          aria-expanded={playlistOpen}
+          onClick={() => setPlaylistOpen(true)}
+        >
+          <span aria-hidden="true">☷</span>
+          <small>{playlistTracks.length}</small>
+        </button>
+        {playlistOpen && (
+          <>
+            <button className="playlist-backdrop" type="button" aria-label="Close song list" onClick={() => setPlaylistOpen(false)} />
+            <aside className="playlist-drawer" id="sailaab-song-list" role="dialog" aria-modal="true" aria-label="Sailaab songs">
+              <div className="playlist-drawer-header">
+                <div>
+                  <small>SAILAAB</small>
+                </div>
+                <button type="button" onClick={() => setPlaylistOpen(false)} aria-label="Close song list">×</button>
+              </div>
+              <div className="song-list">
+                {playlistTracks.map((track, index) => (
+                  <button
+                    className={`song-row${index === currentIndex ? " is-current" : ""}`}
+                    key={track.id}
+                    ref={index === currentIndex ? currentSongRef : undefined}
+                    type="button"
+                    onClick={() => playTrack(index)}
+                  >
+                    <span className="song-number">{index === currentIndex && playing ? "Ⅱ" : String(index + 1).padStart(2, "0")}</span>
+                    <img src={`https://i.ytimg.com/vi/${track.id}/mqdefault.jpg`} alt="" loading="lazy" />
+                    <span className="song-copy"><b>{track.title}</b><small>{track.artist}</small></span>
+                    <span className="song-play" aria-hidden="true">▶</span>
+                  </button>
+                ))}
+              </div>
+            </aside>
+          </>
+        )}
         <div className="yt-engine-wrap" aria-hidden="true">
           <iframe
             ref={playerRef}
