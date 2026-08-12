@@ -13,6 +13,8 @@ export function JobDashboard() {
   const heroBackground = `${basePath}/sailaab-storm-painting-v3.png`;
   const playerRef = useRef<HTMLIFrameElement | null>(null);
   const currentSongRef = useRef<HTMLButtonElement | null>(null);
+  const currentIndexRef = useRef(0);
+  const advancingRef = useRef(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -34,7 +36,23 @@ export function JobDashboard() {
         return;
       }
       if (payload.event !== "infoDelivery" || !payload.info) return;
-      if (typeof payload.info.playerState === "number") setPlaying(payload.info.playerState === 1);
+      if (typeof payload.info.playerState === "number") {
+        const playerState = payload.info.playerState;
+        setPlaying(playerState === 1);
+        if (playerState === 1) advancingRef.current = false;
+        if (playerState === 0 && !advancingRef.current) {
+          advancingRef.current = true;
+          const nextIndex = (currentIndexRef.current + 1) % playlistTracks.length;
+          const nextTrack = playlistTracks[nextIndex];
+          currentIndexRef.current = nextIndex;
+          connectPlayer();
+          sendPlayerCommand("loadVideoById", [nextTrack.id]);
+          setCurrentIndex(nextIndex);
+          setCurrentTime(0);
+          setDuration(0);
+          setPlaying(true);
+        }
+      }
       if (typeof payload.info.currentTime === "number") setCurrentTime(payload.info.currentTime);
       if (typeof payload.info.duration === "number") setDuration(payload.info.duration);
     }
@@ -83,6 +101,7 @@ export function JobDashboard() {
     const nextTrack = playlistTracks[nextIndex];
     connectPlayer();
     sendPlayerCommand("loadVideoById", [nextTrack.id]);
+    currentIndexRef.current = nextIndex;
     setCurrentIndex(nextIndex);
     setCurrentTime(0);
     setDuration(0);
@@ -95,6 +114,7 @@ export function JobDashboard() {
     const previousTrack = playlistTracks[previousIndex];
     connectPlayer();
     sendPlayerCommand("loadVideoById", [previousTrack.id]);
+    currentIndexRef.current = previousIndex;
     setCurrentIndex(previousIndex);
     setCurrentTime(0);
     setDuration(0);
@@ -106,6 +126,7 @@ export function JobDashboard() {
     const track = playlistTracks[index];
     connectPlayer();
     sendPlayerCommand("loadVideoById", [track.id]);
+    currentIndexRef.current = index;
     setCurrentIndex(index);
     setCurrentTime(0);
     setDuration(0);
